@@ -8,6 +8,7 @@ import { createGoal } from '../useCases/create-goal'
 import z from 'zod'
 import { getWeekPendingGoals } from '../useCases/get-week-pending-goals'
 import { sql } from 'drizzle-orm'
+import { createGoalCompletion } from '../useCases/create-gol-completion'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -38,6 +39,24 @@ app.post(
     await createGoal({
       title,
       desiredWeeklyFrequency,
+    })
+  }
+)
+
+app.post(
+  '/completions',
+  {
+    schema: {
+      body: z.object({
+        goalId: z.string(),
+      }),
+    },
+  },
+  async request => {
+    const { goalId } = request.body
+
+    await createGoalCompletion({
+      goalId,
     })
   }
 )
